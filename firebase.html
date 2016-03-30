@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+
+    <title>Recipe Chef</title>
+  </head>
+
+  <body>
+    <div id='messagesDiv'></div>
+    <input type='text' id='nameInput' placeholder="Recipe Name">
+    <input type='text' id='classificationInput' placeholder='Classification'>
+    <input type='text' id='detailsInput' placeholder='Details'>
+
+    <script>
+      var myDataRef = new Firebase('https://xoc3iwujsud.firebaseio-demo.com/');
+
+      $('#messageInput').keypress(function (e) {
+        if (e.keyCode == 13) {
+          var name = $('#nameInput').val();
+          var classi = $('#classificationInput').val();
+          var text = $('#detailsInput').val();
+          myDataRef.push({name: name, classi: classi, text: text});
+          $('#detailsInput').val('');
+        }
+      });
+
+      myDataRef.on('child_added', function(snapshot) {
+        var message = snapshot.val();
+        displayChatMessage(message.name, message.classi, message.text);
+      });
+
+      function displayChatMessage(name, classi, text) {
+        $('<div/>').text(classi).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+        $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+      };
+    </script>
+  </body>
+</html>
